@@ -31,7 +31,7 @@ output "db_instance_username" {
 
 output "db_instance_password" {
   description = "RDS instance master password"
-  value       = var.master_password != "" ? var.master_password : random_password.master_password[0].result
+  value       = var.master_password != "" ? var.master_password : local.db_password
   sensitive   = true
 }
 
@@ -46,12 +46,12 @@ output "db_subnet_group_name" {
 }
 
 output "secrets_manager_secret_arn" {
-  description = "ARN of the Secrets Manager secret containing DB credentials"
-  value       = aws_secretsmanager_secret.db_credentials.arn
+  description = "ARN of the Secrets Manager secret containing DB credentials (not used - for compatibility)"
+  value       = null
 }
 
 output "connection_string" {
   description = "Database connection string"
-  value       = "postgresql://${var.master_username}:${var.master_password != "" ? var.master_password : random_password.master_password[0].result}@${aws_db_instance.main.endpoint}/${var.database_name}"
+  value       = "postgresql://${var.master_username}:${var.master_password != "" ? var.master_password : local.db_password}@${aws_db_instance.main.endpoint}/${var.database_name}"
   sensitive   = true
 }

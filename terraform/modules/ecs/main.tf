@@ -96,35 +96,8 @@ resource "aws_iam_role" "ecs_task_role" {
   }
 }
 
-# IAM Policy for ECS Task Role to access Secrets Manager
-resource "aws_iam_policy" "ecs_secrets_policy" {
-  name        = "${var.project_name}-${var.environment}-ecs-secrets-policy"
-  description = "Policy to allow ECS tasks to access Secrets Manager"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "secretsmanager:GetSecretValue",
-          "secretsmanager:DescribeSecret"
-        ]
-        Resource = var.secrets_manager_secret_arn
-      }
-    ]
-  })
-
-  tags = {
-    Name = "${var.project_name}-${var.environment}-ecs-secrets-policy"
-  }
-}
-
-# Attach Secrets Manager policy to ECS Task Role
-resource "aws_iam_role_policy_attachment" "ecs_task_secrets" {
-  role       = aws_iam_role.ecs_task_role.name
-  policy_arn = aws_iam_policy.ecs_secrets_policy.arn
-}
+# NOTE: Secrets Manager IAM policy removed since we're using environment variables
+# Database credentials are passed directly via environment variables in task definitions
 
 # Security Group for ECS Services
 resource "aws_security_group" "ecs_service" {

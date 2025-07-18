@@ -35,10 +35,10 @@ resource "aws_ecs_task_definition" "pet_service" {
         }
       ]
 
-      secrets = [
+      environment = [
         {
-          name      = "DATABASE_URL"
-          valueFrom = "${var.secrets_manager_secret_arn}:url::"
+          name  = "DATABASE_URL"
+          value = var.database_url
         }
       ]
 
@@ -105,10 +105,10 @@ resource "aws_ecs_task_definition" "food_service" {
         }
       ]
 
-      secrets = [
+      environment = [
         {
-          name      = "DATABASE_URL"
-          valueFrom = "${var.secrets_manager_secret_arn}:url::"
+          name  = "DATABASE_URL"
+          value = var.database_url
         }
       ]
 

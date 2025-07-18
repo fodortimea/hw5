@@ -56,7 +56,7 @@ variable "pet_service" {
     port          = number
   })
   default = {
-    image_uri     = ""
+    image_uri     = "869935088019.dkr.ecr.eu-west-1.amazonaws.com/pet-store-dev-food-service:latest"
     cpu           = 256
     memory        = 512
     desired_count = 1

@@ -27,12 +27,12 @@ export default {
       favicon: "./assets/favicon.png"
     },
     extra: {
-      apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api-placeholder.eu-west-1.amazonaws.com/dev',
-      albBaseUrl: process.env.EXPO_PUBLIC_ALB_BASE_URL || 'http://alb-placeholder.eu-west-1.elb.amazonaws.com',
-      cognitoUserPoolId: process.env.EXPO_PUBLIC_COGNITO_USER_POOL_ID || 'eu-west-1_PLACEHOLDER',
-      cognitoClientId: process.env.EXPO_PUBLIC_COGNITO_CLIENT_ID || '3e69b0qafisul0t968iv04jp3c',
-      cognitoRegion: process.env.EXPO_PUBLIC_COGNITO_REGION || 'eu-west-1',
-      environment: process.env.EXPO_PUBLIC_ENVIRONMENT || 'development'
+      apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
+      albBaseUrl: process.env.EXPO_PUBLIC_ALB_BASE_URL,
+      cognitoUserPoolId: process.env.EXPO_PUBLIC_COGNITO_USER_POOL_ID,
+      cognitoClientId: process.env.EXPO_PUBLIC_COGNITO_CLIENT_ID,
+      cognitoRegion: process.env.EXPO_PUBLIC_COGNITO_REGION,
+      environment: process.env.EXPO_PUBLIC_ENVIRONMENT
     }
   }
 };

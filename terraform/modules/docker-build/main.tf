@@ -52,7 +52,7 @@ resource "null_resource" "ecr_login" {
   }
 
   provisioner "local-exec" {
-    command = "aws ecr get-login-password --region ${data.aws_region.current.name} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com"
+    command = "aws ecr get-login-password --region ${data.aws_region.current.name} | podman login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com"
   }
 }
 
@@ -66,17 +66,7 @@ resource "null_resource" "pet_service_build" {
   depends_on = [null_resource.ecr_login]
 
   provisioner "local-exec" {
-    command = <<-EOT
-      cd ${var.project_root}/pet-service
-      docker build --platform linux/amd64 -t ${var.pet_service_repository_url}:${var.image_tag} .
-      docker push ${var.pet_service_repository_url}:${var.image_tag}
-      
-      # Also tag as latest if this is the main tag
-      if [ "${var.image_tag}" != "latest" ]; then
-        docker tag ${var.pet_service_repository_url}:${var.image_tag} ${var.pet_service_repository_url}:latest
-        docker push ${var.pet_service_repository_url}:latest
-      fi
-    EOT
+    command = "cd ${var.project_root}/pet-service && podman build --cgroup-manager=cgroupfs --platform linux/amd64 -t ${var.pet_service_repository_url}:${var.image_tag} . && podman push ${var.pet_service_repository_url}:${var.image_tag}"
   }
 }
 
@@ -90,17 +80,7 @@ resource "null_resource" "food_service_build" {
   depends_on = [null_resource.ecr_login]
 
   provisioner "local-exec" {
-    command = <<-EOT
-      cd ${var.project_root}/food-service
-      docker build --platform linux/amd64 -t ${var.food_service_repository_url}:${var.image_tag} .
-      docker push ${var.food_service_repository_url}:${var.image_tag}
-      
-      # Also tag as latest if this is the main tag
-      if [ "${var.image_tag}" != "latest" ]; then
-        docker tag ${var.food_service_repository_url}:${var.image_tag} ${var.food_service_repository_url}:latest
-        docker push ${var.food_service_repository_url}:latest
-      fi
-    EOT
+    command = "cd ${var.project_root}/food-service && podman build --cgroup-manager=cgroupfs --platform linux/amd64 -t ${var.food_service_repository_url}:${var.image_tag} . && podman push ${var.food_service_repository_url}:${var.image_tag}"
   }
 }
 

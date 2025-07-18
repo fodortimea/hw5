@@ -1,6 +1,10 @@
 # Use existing DB subnet group from VPC module
 # DB Subnet Group is created by VPC module
 
+locals {
+  db_password = coalesce(var.master_password, random_password.master_password.result)
+}
+
 # Security Group for RDS
 resource "aws_security_group" "rds" {
   name_prefix = "${var.project_name}-${var.environment}-rds-"
@@ -34,9 +38,14 @@ resource "aws_security_group" "rds" {
 }
 
 # Random password for DB (if not provided)
-resource "random_password" "master_password" {
-  count = var.master_password == "" ? 1 : 0
+# resource "random_password" "master_password" {
+#   count = var.master_password == "" ? 1 : 0
 
+#   length  = 16
+#   special = true
+# }
+
+resource "random_password" "master_password" {
   length  = 16
   special = true
 }
@@ -59,7 +68,7 @@ resource "aws_db_instance" "main" {
   # Database
   db_name  = var.database_name
   username = var.master_username
-  password = var.master_password != "" ? var.master_password : random_password.master_password[0].result
+  password = var.master_password != "" ? var.master_password : local.db_password
 
   # Network
   db_subnet_group_name   = var.db_subnet_group_name
@@ -91,25 +100,6 @@ resource "aws_db_instance" "main" {
   }
 }
 
-# Store database credentials in AWS Secrets Manager
-resource "aws_secretsmanager_secret" "db_credentials" {
-  name        = "${var.project_name}-${var.environment}-db-credentials"
-  description = "Database credentials for ${var.project_name} ${var.environment}"
-
-  tags = {
-    Name = "${var.project_name}-${var.environment}-db-credentials"
-  }
-}
-
-resource "aws_secretsmanager_secret_version" "db_credentials" {
-  secret_id = aws_secretsmanager_secret.db_credentials.id
-  secret_string = jsonencode({
-    username = var.master_username
-    password = var.master_password != "" ? var.master_password : random_password.master_password[0].result
-    engine   = "postgres"
-    host     = aws_db_instance.main.endpoint
-    port     = aws_db_instance.main.port
-    dbname   = var.database_name
-    url      = "postgresql://${var.master_username}:${var.master_password != "" ? var.master_password : random_password.master_password[0].result}@${aws_db_instance.main.endpoint}:${aws_db_instance.main.port}/${var.database_name}"
-  })
-}
+# NOTE: Database credentials are managed by Terraform-generated random passwords
+# and passed directly to applications via environment variables.
+# This approach is secure and doesn't require AWS Secrets Manager permissions.

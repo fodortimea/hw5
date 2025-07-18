@@ -5,7 +5,7 @@ echo "🔄 Syncing configuration from Terraform..."
 # Get the script directory and navigate to terraform
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 UI_APP_DIR="$(dirname "$SCRIPT_DIR")"
-cd "$UI_APP_DIR/../terraform/environments/dev"
+cd "$UI_APP_DIR/../terraform"
 
 # Check if terraform state exists
 if [ ! -f "terraform.tfstate" ]; then
@@ -45,7 +45,7 @@ EXPO_PUBLIC_ALB_BASE_URL=http://$ALB_DNS
 # Cognito Configuration
 EXPO_PUBLIC_COGNITO_USER_POOL_ID=$USER_POOL_ID
 EXPO_PUBLIC_COGNITO_CLIENT_ID=$CLIENT_ID
-EXPO_PUBLIC_COGNITO_REGION=us-east-1
+EXPO_PUBLIC_COGNITO_REGION=eu-west-1
 
 # Environment
 EXPO_PUBLIC_ENVIRONMENT=development

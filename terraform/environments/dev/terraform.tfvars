@@ -47,17 +47,21 @@ database_deletion_protection    = false  # Easier cleanup for dev
 database_skip_final_snapshot    = true
 
 # ECS Configuration - Will be populated after building Docker images
-pet_service_image_uri      = ""  # Will be set after ECR push
+pet_service_image_uri      = "869935088019.dkr.ecr.eu-west-1.amazonaws.com/pet-store-dev-pet-service:latest"  # Will be set after ECR push
 pet_service_cpu           = 256
 pet_service_memory        = 512
 pet_service_desired_count = 1
 pet_service_port          = 8000
 
-food_service_image_uri     = ""  # Will be set after ECR push
+
+food_service_image_uri     = "869935088019.dkr.ecr.eu-west-1.amazonaws.com/pet-store-dev-food-service:latest"  # Will be set after ECR push
 food_service_cpu          = 256
 food_service_memory       = 512
 food_service_desired_count = 1
 food_service_port         = 8001
+
+# Skip Docker build for now due to WSL/Podman systemd issues
+skip_docker_build = true
 
 # Logging Configuration
 enable_ecs_logging = true

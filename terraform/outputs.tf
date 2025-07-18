@@ -22,17 +22,23 @@ output "docker_commands" {
 # Docker Build Outputs
 output "docker_build_status" {
   description = "Status of Docker builds"
-  value = {
-    pet_service_build  = module.docker_build.pet_service_build_status
-    food_service_build = module.docker_build.food_service_build_status
+  value = var.skip_docker_build ? {
+    pet_service_build  = "Docker build skipped"
+    food_service_build = "Docker build skipped"
+  } : {
+    pet_service_build  = module.docker_build[0].pet_service_build_status
+    food_service_build = module.docker_build[0].food_service_build_status
   }
 }
 
 output "docker_image_uris" {
   description = "Docker image URIs"
-  value = {
-    pet_service  = module.docker_build.pet_service_image_uri
-    food_service = module.docker_build.food_service_image_uri
+  value = var.skip_docker_build ? {
+    pet_service  = "${module.ecr.pet_service_repository_url}:latest"
+    food_service = "${module.ecr.food_service_repository_url}:latest"
+  } : {
+    pet_service  = module.docker_build[0].pet_service_image_uri
+    food_service = module.docker_build[0].food_service_image_uri
   }
 }
 

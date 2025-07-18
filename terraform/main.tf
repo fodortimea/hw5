@@ -1,25 +1,4 @@
-terraform {
-  required_version = ">= 1.0"
-  
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.aws_region
-
-  default_tags {
-    tags = {
-      Environment = var.environment
-      Project     = var.project_name
-      ManagedBy   = "terraform"
-    }
-  }
-}
+# Provider configuration moved to provider.tf
 
 # Local values for commonly used configurations
 locals {
@@ -44,7 +23,7 @@ resource "random_password" "db_password" {
 
 # ECR Module
 module "ecr" {
-  source = "../../modules/ecr"
+  source = "./modules/ecr"
 
   project_name                    = var.project_name
   environment                    = var.environment
@@ -58,7 +37,7 @@ module "ecr" {
 
 # VPC Module
 module "vpc" {
-  source = "../../modules/vpc"
+  source = "./modules/vpc"
 
   project_name         = var.project_name
   environment         = var.environment
@@ -70,7 +49,7 @@ module "vpc" {
 
 # Cognito Module
 module "cognito" {
-  source = "../../modules/cognito"
+  source = "./modules/cognito"
 
   project_name        = var.project_name
   environment        = var.environment
@@ -85,7 +64,7 @@ module "cognito" {
 
 # RDS Module
 module "rds" {
-  source = "../../modules/rds"
+  source = "./modules/rds"
 
   project_name          = var.project_name
   environment          = var.environment
@@ -107,7 +86,7 @@ module "rds" {
 
 # ECS Module
 module "ecs" {
-  source = "../../modules/ecs"
+  source = "./modules/ecs"
 
   project_name             = var.project_name
   environment             = var.environment
@@ -143,7 +122,8 @@ module "ecs" {
 
 # Docker Build Module
 module "docker_build" {
-  source = "../../modules/docker-build"
+  count = var.skip_docker_build ? 0 : 1
+  source = "./modules/docker-build"
 
   project_root                 = var.project_root
   pet_service_repository_url   = module.ecr.pet_service_repository_url
@@ -160,7 +140,7 @@ module "docker_build" {
 
 # API Gateway Module
 module "api_gateway" {
-  source = "../../modules/api-gateway"
+  source = "./modules/api-gateway"
 
   project_name              = var.project_name
   environment              = var.environment
@@ -178,5 +158,5 @@ module "api_gateway" {
   enable_cors              = var.enable_cors
   cors_configuration       = var.cors_configuration
 
-  depends_on = [module.ecs, module.docker_build]
+  depends_on = [module.ecs]
 }
